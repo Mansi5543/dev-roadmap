@@ -1,0 +1,29 @@
+{
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  },
+  "name": "dev-roadmap",
+  "version": "1.0.0",
+  "main": "app.js",
+  "dependencies": {
+    "esbuild": "^0.28.2",
+    "undici-types": "^8.3.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mansi5543/dev-roadmap.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mansi5543/dev-roadmap/issues"
+  },
+  "homepage": "https://github.com/Mansi5543/dev-roadmap#readme",
+  "description": ""
+}
