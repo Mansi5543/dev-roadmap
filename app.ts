@@ -1,8 +1,15 @@
-// Native fetch is built into Node.js (v18+)
-async function getGitHubStats(username) {
+interface Repository {
+  name: string;
+  html_url: string;
+  visibility: string;
+  default_branch: string;
+  stargazers_count: number;
+}
+
+async function getGitHubStats(username: string): Promise<Repository[]> {
   const url = `https://api.github.com/users/${username}/repos?per_page=5&sort=updated`;
 
-  console.log(`Querying GitHub API for user: ${username}...`);
+  console.log(`[HTTP] Fetching repos for: ${username}...`);
 
   const response = await fetch(url, {
     headers: {
@@ -14,11 +21,11 @@ async function getGitHubStats(username) {
     throw new Error(`GitHub API Error: ${response.status} ${response.statusText}`);
   }
 
-  const repos = await response.json();
-  return repos;
+  const data = (await response.json()) as Repository[];
+  return data;
 }
 
-async function runTracker() {
+async function runTracker(): Promise<void> {
   const username = "Mansi5543";
 
   try {
@@ -28,15 +35,20 @@ async function runTracker() {
     console.log(`Live Repositories Found: ${repos.length}`);
     console.log("-----------------------------------------");
 
-    repos.forEach((repo, idx) => {
+    repos.forEach((repo: Repository, idx: number) => {
       console.log(`${idx + 1}. ${repo.name}`);
       console.log(`   URL       : ${repo.html_url}`);
+      console.log(`   Stars     : ${repo.stargazers_count}`);
       console.log(`   Visibility: ${repo.visibility}`);
-      console.log(`   Default Br: ${repo.default_branch}`);
+      console.log(`   Branch    : ${repo.default_branch}`);
       console.log("-----------------------------------------");
     });
   } catch (error) {
-    console.error(`Execution failed: ${error.message}`);
+    if (error instanceof Error) {
+      console.error(`Execution error: ${error.message}`);
+    } else {
+      console.error("An unknown error occurred.");
+    }
   }
 }
 
