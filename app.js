@@ -1,41 +1,43 @@
-// Function simulating a fetch request from a remote API
-function fetchDeveloperProfile(username) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (!username) {
-        reject(new Error("Username is required"));
-      } else {
-        resolve({
-          user: username,
-          role: "AI Tooling & Backend Engineer",
-          targetTrack: "TypeScript + Open Source Automation",
-          dailyGoalHours: 6,
-          status: "Active"
-        });
-      }
-    }, 1200); // Simulates 1.2-second network latency
+// Native fetch is built into Node.js (v18+)
+async function getGitHubStats(username) {
+  const url = `https://api.github.com/users/${username}/repos?per_page=5&sort=updated`;
+
+  console.log(`Querying GitHub API for user: ${username}...`);
+
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "dev-roadmap-tracker"
+    }
   });
+
+  if (!response.ok) {
+    throw new Error(`GitHub API Error: ${response.status} ${response.statusText}`);
+  }
+
+  const repos = await response.json();
+  return repos;
 }
 
-// Asynchronous runner function using modern async/await
-async function runRoadmapTracker() {
-  console.log("Connecting to remote developer registry...");
+async function runTracker() {
+  const username = "Mansi5543";
 
   try {
-    const profile = await fetchDeveloperProfile("Mansi");
-    
-    console.log("Data retrieved successfully:");
+    const repos = await getGitHubStats(username);
+
     console.log("-----------------------------------------");
-    console.log(`Developer : ${profile.user}`);
-    console.log(`Role Track: ${profile.role}`);
-    console.log(`Focus     : ${profile.targetTrack}`);
-    console.log(`Daily Goal: ${profile.dailyGoalHours} hours/day`);
-    console.log(`Status    : ${profile.status}`);
+    console.log(`Live Repositories Found: ${repos.length}`);
     console.log("-----------------------------------------");
+
+    repos.forEach((repo, idx) => {
+      console.log(`${idx + 1}. ${repo.name}`);
+      console.log(`   URL       : ${repo.html_url}`);
+      console.log(`   Visibility: ${repo.visibility}`);
+      console.log(`   Default Br: ${repo.default_branch}`);
+      console.log("-----------------------------------------");
+    });
   } catch (error) {
-    console.error(`Failed to load profile: ${error.message}`);
+    console.error(`Execution failed: ${error.message}`);
   }
 }
 
-// Execute the async program
-runRoadmapTracker();
+runTracker();
